@@ -1,0 +1,12 @@
+%pyproject_wheel() %{expand:\\\
+	CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\\\
+	%{__python3} -m pip wheel --no-deps --use-pep517 --no-build-isolation --progress-bar off --verbose .
+}
+
+%pyproject_install() %{expand:\\\
+%{__python3} -m pip install   --root %{buildroot}  --strip-file-prefix %{buildroot} --no-deps  --progress-bar off --verbose ./%{pypi_name}-%{version}*.whl
+if [ -e %{buildroot}%{_bindir} ]
+then
+pathfix.py -pni "%{__python3} %{py3_shbang_opts}" %{buildroot}%{_bindir}/* 
+fi
+}
